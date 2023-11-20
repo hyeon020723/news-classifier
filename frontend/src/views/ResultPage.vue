@@ -9,7 +9,7 @@
 
         <div v-else>
           <img
-            src="@/assets/musma_pick.png"
+            src="frontend/src/views/@/assets/musma_pick.png"
             alt="Musma Pick Image"
             id="musmaspickImg" />
           <div
