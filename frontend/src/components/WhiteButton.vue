@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="ButtonArea">
-      <button>{{ ButtonText }}</button>
+      <button id="WhiteButton">{{ ButtonText }}</button>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style scoped>
-button {
+#WhiteButton {
   cursor: pointer;
   font-size: 0.8em;
   border: 1px solid #5f5f5f;

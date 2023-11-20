@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button>{{ ButtonText }}</button>
+    <button id="BlueButton">{{ ButtonText }}</button>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style scoped>
-button {
+#BlueButton {
   cursor: pointer;
   font-size: 1.2em;
   border: solid #0096e7;
