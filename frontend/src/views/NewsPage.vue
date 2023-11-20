@@ -88,6 +88,7 @@ export default {
       newsItems: [],
       selectedCategory: "1",
       selectedNews: { category: "", title: "", url: "", date: "" },
+
       summarySelect: { category: "", title: "", link: "", date: "" },
       isModalOpen: false,
     };
@@ -247,6 +248,57 @@ export default {
           console.error("Error during API call", error);
         });
     },
+<<<<<<< HEAD
+=======
+
+    //title과 link 들고 오는 axios get
+    fetchData() {
+      axios
+        .get("http://localhost:3000/api/clipped-news/specific")
+        .then((response) => {
+          console.log("API Response Data:", response.data);
+          this.newsItems = response.data.map((item) => ({
+            category_id: item.category_id,
+            title: item.title,
+            url: item.url,
+            publication_date: item.publication_date,
+          }));
+          console.log("Filtered News:", this.newsItems);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    summarizeSelectedArticle(item) {
+      // Prepare data for the selected article
+      const articleData = {
+        title: item.title,
+        url: item.url,
+      };
+
+      // Send a POST request to the server for summarization
+      axios
+        .post(
+          "http://localhost:3000/api/clipped-news/summarize-selected-articles",
+          {
+            selectedArticles: [articleData],
+          }
+        )
+        .then((response) => {
+          // Handle the response, for example, update the summary state for the selected article
+          const { title, url } = response.data.articles[0];
+          console.log("Title:", title);
+          console.log("URL:", url);
+          console.log("success:", response.data);
+
+          // You can update the state or display the title, url, and summary as needed
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error("Error during API call", error);
+        });
+    },
+>>>>>>> 973645bb775665e3718386844156f6f3126dcbf1
   },
 };
 </script>

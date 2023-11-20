@@ -1,8 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getAllClippedNews, getSpecificClippedNews } = require('../models/newsModel');
+const {
+  getAllClippedNews,
+  getSpecificClippedNews,
+} = require("../models/newsModel");
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const clippedNews = await getAllClippedNews();
     res.json(clippedNews);
@@ -11,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/specific', async (req, res) => {
+router.get("/specific", async (req, res) => {
   try {
     const specificClippedNews = await getSpecificClippedNews(); // 새로운 모델 함수로 변경
     res.json(specificClippedNews);
@@ -21,7 +24,7 @@ router.get('/specific', async (req, res) => {
 });
 
 // category_id 에 맞춰서 데베에서 끌고오는 라우터
-router.get('/category/:category_id', async (req, res) => {
+router.get("/category/:category_id", async (req, res) => {
   try {
     const categoryId = req.params.categoryId;
 
@@ -39,7 +42,7 @@ module.exports = router;
 let userSettings = {};
 
 // Endpoint for submitting user settings
-router.post('/submit-settings', async (req, res) => {
+router.post("/submit-settings", async (req, res) => {
   try {
     // Get user settings from the request body
     const { startDate, endDate, newsCount, selectedCategories } = req.body;
@@ -53,7 +56,10 @@ router.post('/submit-settings', async (req, res) => {
     };
 
     // Successful response
-    res.json({ success: true, message: 'User settings have been successfully stored.' });
+    res.json({
+      success: true,
+      message: "User settings have been successfully stored.",
+    });
   } catch (err) {
     // Error response
     res.status(500).json({ error: err.message });
@@ -61,13 +67,13 @@ router.post('/submit-settings', async (req, res) => {
 });
 
 // 선택한 기사 요약보기 버튼 누르면 api로 Post
-router.post('/summarize-selected-articles', (req, res) => {
+router.post("/summarize-selected-articles", (req, res) => {
   try {
     // Get selected articles
     const selectedArticles = req.body.selectedArticles;
 
     // Prepare data array for multiple articles
-    const articlesData = (selectedArticles || []).map(article => ({
+    const articlesData = (selectedArticles || []).map((article) => ({
       title: article.title,
       url: article.url,
     }));
@@ -79,7 +85,5 @@ router.post('/summarize-selected-articles', (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 module.exports = router;

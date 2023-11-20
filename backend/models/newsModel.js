@@ -157,15 +157,23 @@ const saveClippedNews = (newsData) => {
         VALUES (?, ?, ?, ?)
       `;
 
-      connection.query(sql, [title, url, publication_date, category_id], (err, results) => {
-        connection.release();
-        if (err) reject(err);
-        else resolve(results);
-      });
+      connection.query(
+        sql,
+        [title, url, publication_date, category_id],
+        (err, results) => {
+          connection.release();
+          if (err) reject(err);
+          else resolve(results);
+        }
+      );
     });
   });
 };
 
-
-module.exports = { getAllNewsCategories, getAllClippedNews, getNewsByCategoryId, getNewsByDateAndCategory, saveClippedNews };
-
+module.exports = {
+  getAllNewsCategories,
+  getAllClippedNews,
+  getNewsByCategoryId,
+  getNewsByDateAndCategory,
+  saveClippedNews,
+};
