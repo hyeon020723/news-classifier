@@ -9,9 +9,9 @@
         <div v-if="cartItems.length === 0">
           <div class="dropdownTitle">empty</div>
           <div class="emptyButtonArea">
-            <router-link to="/NewsPage">
+            <router-url to="/NewsPage">
               <BlueButton ButtonText="뉴스 담기" />
-            </router-link>
+            </router-url>
           </div>
         </div>
 
@@ -30,8 +30,9 @@
                 class="list-item"
                 v-for="(item, index) in categoryItems"
                 :key="index">
-                <div class="item-title">제목: {{ item.title }}</div>
-                <div class="item-link">링크: {{ item.link }}</div>
+                <div class="item-title">{{ item.title }}</div>
+                <p>-</p>
+                <div class="item-url">{{ item.url }}</div>
                 <button
                   class="deletebtn"
                   :id="'item' + index + itemIndex"
@@ -42,11 +43,11 @@
             </div>
           </div>
           <div class="ButtonArea">
-            <router-link to="/ResultPage">
+            <router-url to="/ResultPage">
               <BlueButton
                 ButtonText="동향 보기"
                 @click="showCategorizedItems" />
-            </router-link>
+            </router-url>
             <!-- @click="
             () => {
               for (let i in this.categorizedItems) {
@@ -228,7 +229,7 @@ input[type="checkbox"] {
   margin: 10px;
 }
 
-.item-link {
+.item-url {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

@@ -26,12 +26,10 @@
           width="24"
           height="25"
           viewBox="0 0 24 25"
-          fill="none"
-        >
+          fill="none">
           <path
             d="M15.586 11.1569L11.636 7.20692C11.4538 7.01832 11.353 6.76571 11.3553 6.50352C11.3576 6.24132 11.4628 5.99051 11.6482 5.8051C11.8336 5.61969 12.0844 5.51452 12.3466 5.51224C12.6088 5.50997 12.8614 5.61076 13.05 5.79292L18.707 11.4499C18.8002 11.5426 18.8741 11.6527 18.9246 11.7741C18.9751 11.8954 19.001 12.0255 19.001 12.1569C19.001 12.2883 18.9751 12.4184 18.9246 12.5398C18.8741 12.6611 18.8002 12.7713 18.707 12.8639L13.05 18.5209C12.9578 18.6164 12.8474 18.6926 12.7254 18.745C12.6034 18.7974 12.4722 18.825 12.3394 18.8262C12.2066 18.8273 12.0749 18.802 11.952 18.7517C11.8291 18.7015 11.7175 18.6272 11.6236 18.5333C11.5297 18.4394 11.4555 18.3278 11.4052 18.2049C11.3549 18.082 11.3296 17.9503 11.3307 17.8175C11.3319 17.6847 11.3595 17.5535 11.4119 17.4315C11.4643 17.3095 11.5405 17.1992 11.636 17.1069L15.586 13.1569H6C5.73478 13.1569 5.48043 13.0516 5.29289 12.864C5.10536 12.6765 5 12.4221 5 12.1569C5 11.8917 5.10536 11.6373 5.29289 11.4498C5.48043 11.2623 5.73478 11.1569 6 11.1569H15.586Z"
-            fill="#697077"
-          />
+            fill="#697077" />
         </svg>
         <input type="date" v-model="endDate" />
       </div>
@@ -44,8 +42,7 @@
           :key="category.id"
           class="categoryTitle"
           :class="{ activeCategory: selectedCategory === category.id }"
-          @click="selectCategory(category.id)"
-        >
+          @click="selectCategory(category.id)">
           {{ category.name }}
         </span>
       </div>
@@ -55,17 +52,14 @@
           <div class="list">
             <div
               class="list-item"
-              v-for="(item, index) in newsItems"
-              :key="index"
-            >
+              v-for="(item, index) in filteredNewsItems"
+              :key="index">
               <input
                 type="checkbox"
                 :id="'item' + index"
-                v-model="item.isSelected"
-              />
+                v-model="item.isSelected" />
               <label :for="'item' + index">
                 <div class="item-title">{{ item.title }}</div>
-                <a :href="item.url">{{ item.url }}</a>
                 <a :href="item.url">{{ item.url }}</a>
               </label>
               <div class="readmore" @click="summarizeSelectedArticle(item)">
@@ -114,38 +108,10 @@ export default {
     cartItems() {
       return this.$store.state.cartItems;
     },
-    filteredAndMatchedNews() {
-      // 기간이 설정되어 있지 않은 상태일 때 모든 뉴스를 반환
-      if (!this.startDate && !this.endDate) {
-        return this.newsItems.filter(
-          (item) => item.category === this.selectedCategory
-        );
-      }
-
-      // 기간이 설정된 경우 기존 로직 유지
-      const filterStartDate = new Date(this.startDate);
-      const filterEndDate = new Date(this.endDate);
-
-      if (filterStartDate > filterEndDate) {
-        alert("종료일은 시작일 이후의 날짜여야 합니다.");
-        this.endDate = null;
-        return [];
-      }
-
-      return this.newsItems
-        .map((item) => {
-          const itemDate = new Date(item.date);
-          const isDateInRange =
-            itemDate >= filterStartDate && itemDate <= filterEndDate;
-          const isCategoryMatch = item.category === this.selectedCategory;
-
-          return {
-            ...item,
-            isDateInRange,
-            isCategoryMatch,
-          };
-        })
-        .filter((item) => item.isDateInRange && item.isCategoryMatch);
+    filteredNewsItems() {
+      return this.newsItems.filter(
+        (item) => item.category_id === parseInt(this.selectedCategory)
+      );
     },
   },
   watch: {
@@ -169,124 +135,87 @@ export default {
 
     selectCategory(category_id) {
       this.selectedCategory = category_id;
-      this.fetchData(category_id);
       console.log(category_id);
     },
 
-  addToCart() {
-    const selectedItems = this.filteredAndMatchedNews.filter(
-      (item) => item.isSelected
-    );
-
-    if (selectedItems.length > 0) {
-      const newItems = selectedItems.filter((item) => {
-        // Check if the item is not already in the cart
-        return !this.$store.state.cartItems.some(
-          (cartItem) => cartItem.title === item.title
-        );
-      });
-
-      if (newItems.length === 0) {
-        window.alert("선택한 뉴스는 이미 담겨 있습니다.");
-        return;
-      }
-
-      this.$store.commit("addToCart", newItems);
-
-      const confirmAddToCart = window.confirm(
-        "선택한 뉴스가 담겼습니다. 담은 뉴스를 장바구니에서 확인하시겠습니까?"
+    addToCart() {
+      const selectedItems = this.filteredNewsItems.filter(
+        (item) => item.isSelected
       );
 
-      if (confirmAddToCart) {
-        this.$router.push({ name: "BasketPage" });
-      }
-    } else {
-      window.alert("뉴스를 선택해주세요.");
-    }
-    console.log(this.$store.state.cartItems);
-  },
+      if (selectedItems.length > 0) {
+        const newItems = selectedItems.filter((item) => {
+          // Check if the item is not already in the cart
+          return !this.$store.state.cartItems.some(
+            (cartItem) => cartItem.title === item.title
+          );
+        });
 
-  handleDateSet() {
-    if (this.startDate && this.endDate) {
-      const filterStartDate = new Date(this.startDate).getTime();
-      const filterEndDate = new Date(this.endDate).getTime();
+        if (newItems.length === 0) {
+          window.alert("선택한 뉴스는 이미 담겨 있습니다.");
+          return;
+        }
 
-      if (filterStartDate > filterEndDate) {
-        alert("종료일은 시작일 이후의 날짜여야 합니다.");
-        this.endDate = null;
-        return;
-      }
+        this.$store.commit("addToCart", newItems);
 
-      this.filteredNews = this.newsItems.map((item) => {
-        const itemDate = new Date(item.date).getTime();
-
-        const isDateInRange =
-          itemDate >= filterStartDate && itemDate <= filterEndDate;
-        const isCategoryMatch = item.category === this.selectedCategory;
-
-        console.log(
-          `Item: ${item.title}, Date: ${itemDate}, isDateInRange: ${isDateInRange}, isCategoryMatch: ${isCategoryMatch}`
+        const confirmAddToCart = window.confirm(
+          "선택한 뉴스가 담겼습니다. 담은 뉴스를 장바구니에서 확인하시겠습니까?"
         );
 
-        return {
-          ...item,
-          isDateInRange,
-          isCategoryMatch,
-        };
-      });
-    }
-  },
-
-  //title과 link 들고 오는 axios get
-  fetchData(category_id) {
-    axios
-      .get("http://localhost:3000/api/clipped-news/specific", {
-        params: { category_id },
-      })
-      .then((response) => {
-        console.log("API Response Data:", response.data);
-        this.newsItems = response.data.map((item) => ({
-          category_id: item.category_id,
-          title: item.title,
-          url: item.url,
-          publication_date: item.publication_date,
-        }));
-        console.log("Filtered News:", this.newsItems);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  },
-  summarizeSelectedArticle(item) {
-    // Prepare data for the selected article
-    const articleData = {
-      title: item.title,
-      url: item.url,
-    };
-
-    // Send a POST request to the server for summarization
-    axios
-      .post(
-        "http://localhost:3000/api/clipped-news/summarize-selected-articles",
-        {
-          selectedArticles: [articleData],
+        if (confirmAddToCart) {
+          this.$router.push({ name: "BasketPage" });
         }
-      )
-      .then((response) => {
-        // Handle the response, for example, update the summary state for the selected article
-        const { title, url } = response.data.articles[0];
-        console.log("Title:", title);
-        console.log("URL:", url);
-        console.log("success:", response.data);
+      } else {
+        window.alert("뉴스를 선택해주세요.");
+      }
+      console.log(this.$store.state.cartItems);
+    },
 
-        // You can update the state or display the title, url, and summary as needed
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error("Error during API call", error);
-      });
+    //title과 link 들고 오는 axios get
+    fetchData() {
+      axios
+        .get("http://localhost:3000/api/clipped-news/specific", {
+          params: { category_id: this.selectedCategory },
+        })
+        .then((response) => {
+          // Update newsItems with the fetched data
+          this.newsItems = response.data;
+        })
+        .catch((error) => {
+          console.error("API Error:", error);
+        });
+    },
+
+    summarizeSelectedArticle(item) {
+      // Prepare data for the selected article
+      const articleData = {
+        title: item.title,
+        url: item.url,
+      };
+
+      // Send a POST request to the server for summarization
+      axios
+        .post(
+          "http://localhost:3000/api/clipped-news/summarize-selected-articles",
+          {
+            selectedArticles: [articleData],
+          }
+        )
+        .then((response) => {
+          // Handle the response, for example, update the summary state for the selected article
+          const { title, url } = response.data.articles[0];
+          console.log("Title:", title);
+          console.log("URL:", url);
+          console.log("success:", response.data);
+
+          // You can update the state or display the title, url, and summary as needed
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error("Error during API call", error);
+        });
+    },
   },
-},
 };
 </script>
 
