@@ -1,0 +1,10 @@
+[Purpose]
+Analyze the current trends for each section based on the given news article titles in [data].
+[Output Format] should be json like this in korean.
+[Output Format]
+{
+    "industry": str,
+    "construction": str,
+    "shipbuilding": str,
+    "it": str,
+}

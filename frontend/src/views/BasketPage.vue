@@ -9,9 +9,9 @@
         <div v-if="cartItems.length === 0">
           <div class="dropdownTitle">empty</div>
           <div class="emptyButtonArea">
-            <router-link to="/NewsPage">
+            <router-url to="/NewsPage">
               <BlueButton ButtonText="뉴스 담기" />
-            </router-link>
+            </router-url>
           </div>
         </div>
 
@@ -30,8 +30,9 @@
                 class="list-item"
                 v-for="(item, index) in categoryItems"
                 :key="index">
-                <div class="item-title">제목: {{ item.title }}</div>
-                <div class="item-link">링크: {{ item.link }}</div>
+                <div class="item-title">{{ item.title }}</div>
+                <p>-</p>
+                <div class="item-url">{{ item.url }}</div>
                 <button
                   class="deletebtn"
                   :id="'item' + index + itemIndex"
@@ -76,9 +77,12 @@ export default {
     };
   },
   created() {
-    this.$store.state.cartItems.forEach((item) => {
-      this.cartItems.push({ ...item, checked: false });
-      this.isOpen[item.category] = true;
+    this.cartItems = this.$store.state.cartItems.map((item) => ({
+      ...item,
+      checked: false,
+    }));
+    this.cartItems.forEach((item) => {
+      this.isOpen[item.category_id] = true; // assuming category_id is the correct property
     });
   },
 
@@ -86,7 +90,7 @@ export default {
     categorizedItems() {
       const categories = {};
       this.cartItems.forEach((item) => {
-        const categoryName = this.getCategoryName(item.category);
+        const categoryName = this.getCategoryName(item.category_id); // change to category_id
         if (!categories[categoryName]) {
           categories[categoryName] = [];
         }
@@ -228,7 +232,7 @@ input[type="checkbox"] {
   margin: 10px;
 }
 
-.item-link {
+.item-url {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

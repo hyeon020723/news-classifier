@@ -20,6 +20,12 @@ export default createStore({
   state: {
     cartItems: [],
   },
+  actions: {
+    resetCartItems({ commit }) {
+      commit("resetCartItems");
+    },
+  },
+
   mutations: {
     addToCart(state, items) {
       console.log("Adding to cart:", items);
@@ -37,6 +43,10 @@ export default createStore({
       if (savedCartItems) {
         state.cartItems = JSON.parse(savedCartItems);
       }
+    },
+    resetCartItems(state) {
+      console.log("Resetting cart items");
+      state.cartItems = [];
     },
   },
   plugins: [localStoragePlugin],
